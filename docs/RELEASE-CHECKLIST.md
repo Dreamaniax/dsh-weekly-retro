@@ -57,6 +57,7 @@ DSH_NO_PATCH=1 DSH_VERIFY_PORT=62382 bash test/boot-verify.sh
 
 - [x] 名称：`dsh-weekly-retro`；版本 `0.4.0`；icon `assets/icon.png`
 - [ ] 描述与 README 一致；标注前置依赖与“本机数据、无遥测”
+- [ ] **目录 PR**：`awesome-dsh-plugin` 要求仓库创建满 1 天；本仓库创建于 2026-11-12，最早 2026-11-13 提交 `data/plugins/Dreamaniax__dsh-weekly-retro.yml`（内容见 `docs/marketplace-entry.yml`）
 - [ ] 提交审核后，在干净 profile 安装验证：
   - [ ] 启动无 `did not activate`
   - [ ] 首页空数据可打开、不崩
