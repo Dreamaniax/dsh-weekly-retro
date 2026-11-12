@@ -74,3 +74,24 @@
 - 8 组测试通过（含 candidate-write）。
 
 **评分**：按用户要求**不记录评分**。
+
+
+## 2026-11-12 · 0.4.7 隐私修复 + profile 重建
+
+**可见 PUA 输出**
+
+> 🟠 搜索词写进 URL 是 B3 引入的隐私回退：Tab/筛选可以进 URL，**搜索词不行**。这类问题不靠感觉，靠“URL 里有没有、刷新后还在不在”验收。
+
+**修复**
+
+- `weeklyCandidateQ` 不再写 URL、不再从 URL 读取；搜索词仅保存在内存，刷新清空。
+- Tab/筛选/排序仍持久化；报告默认脱敏、写路由 403 等原有边界保留。
+
+**profile 重建**
+
+- 旧 desktop 整目录备份为 `~/.dsh/profiles/desktop.broken-20261112-223938`；配置备份在 `~/.dsh/profile-backups/desktop-20261112-223842`。
+- 用官方 `web` 模板新建 `desktop-rebuilt`，恢复原 27 bundles / 18 依赖 / cordis.patch；安装完成。
+- 切换前复验：`diagnostics.ok=true`、`tools=4`、`routes=13`。
+- `desktop` 由 Electron 独占，CLI 直接 boot 被策略拒绝（不是数据失败）；应用重启后生效。
+
+**评分**：按用户要求**不记录评分**。

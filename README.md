@@ -1,4 +1,4 @@
-# dsh-weekly-retro · DSH 周报复盘插件 v0.4.6
+# dsh-weekly-retro · DSH 周报复盘插件 v0.4.7
 
 ![plugin icon](./assets/icon.png)
 
