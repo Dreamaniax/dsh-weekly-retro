@@ -45,3 +45,24 @@
 ## 联系
 
 隐私问题请在本仓库开 issue（不要粘贴真实周报内容/会话文本）；安全问题见 [SECURITY.md](./SECURITY.md)。
+
+
+## 报告保存在哪、里面有什么
+
+默认根目录 `~/.dsh/learning/`（`DSH_LEARNING` 可覆盖）：
+
+| 路径 | 内容 | 权限 |
+|---|---|---|
+| `weekly/latest.md` / `latest.html` | 完整周报（含会话标题、工作区/文件路径） | `0600` |
+| `weekly/<week>.md` / `<week>.html` | 历史完整周报 | `0600` |
+| `weekly/latest.redacted.md/html`、`<week>.redacted.*` | **分享用脱敏版**：标题/路径/候选/技能名均替换 | `0600` |
+| `weekly/digest.json`、`digest-<week>.json` | 会话摘要，**含用户消息片段** | `0600` |
+| `weekly/packet.md`、`packet-<week>.md` | 分析用 packet，**含消息片段与路径** | `0600` |
+| `weekly/proposals.json`、`findings.json`、`history.jsonl`、`decisions.json` | 候选/画像/历史/采纳 | `0600` |
+| `weekly/*.bak-*` | `decisions.json` 写前备份 | `0600` |
+| `logs/` | 流水线 stdout/stderr | `0700` 目录 / `0600` 文件 |
+| `scripts/history.jsonl` | 跨周历史种子 | `0600` |
+
+- 报告路由 `/dsh-weekly-retro/report` **默认返回 `*.redacted.html`**（若已生成）；本机要看完整版用 `?full=1` 或 `DSH_WEEKLY_REPORT_FULL=1`。远程仍被 loopback 门禁拦住。
+- 完整报告包含你的会话标题/路径（这是周报的价值）；**任何对外分享请用 `.redacted.*`**，不要发 `latest.md/html`、`digest.json`、`packet.md`。
+- 分析完成后可清理中间正文：`node pipeline/privacy-scrub.mjs --logs`（会清空 digest 消息、packet 正文与日志；报告保留）。

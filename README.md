@@ -1,4 +1,4 @@
-# dsh-weekly-retro · DSH 周报复盘插件 v0.4.0
+# dsh-weekly-retro · DSH 周报复盘插件 v0.4.1
 
 ![plugin icon](./assets/icon.png)
 
@@ -56,7 +56,7 @@ pnpm install   # 也可用 DSH 运行时自带的 pnpm
 
 自检端点：`GET /dsh-weekly-retro/diagnostics` → `{ok, tools, toolCount, toolError, commands, routes, mountedAt, remoteAccess}`。
 
-> 隐私：所有数据路由**默认只允许本机回环访问**；远程访问需显式 `DSH_WEEKLY_ALLOW_REMOTE=1`（并自行加认证）或携带 `X-Weekly-Token`。详见 [PRIVACY.md](./PRIVACY.md)。
+> 隐私：所有数据路由**默认只允许本机回环访问**；远程访问需显式 `DSH_WEEKLY_ALLOW_REMOTE=1`（并自行加认证）或携带 `X-Weekly-Token`。报告默认存 `~/.dsh/learning/weekly/`，完整版 `0600`，`/report` 默认返回 `*.redacted.html`；详见 [PRIVACY.md](./PRIVACY.md)。
 
 > 数据目录：默认 `~/.dsh/learning`（`DSH_LEARNING` 可覆盖）。确定性流水线已随包内置（`pipeline/`）；本机若已有 `~/.dsh/learning/scripts` 则优先用本机版本。`land-sync.sh` 仍由用户本机提供（用于把技能/profile 同步到你自己的私有配置仓库），没有它时“采纳”仍会写入 `decisions.json`，只是不同步。
 

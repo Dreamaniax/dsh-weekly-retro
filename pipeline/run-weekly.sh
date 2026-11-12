@@ -8,6 +8,7 @@
 # 依赖：node（自动找：DSH_NODE → PATH → DSH runtime → Windows 常见安装位置）
 #       zstd（会话是多帧 zstd，需要 CLI；DSH_ZSTD 可覆盖）
 set -uo pipefail
+umask 077  # 周报含会话标题/路径，默认仅 owner 可读写
 
 BASE="${DSH_LEARNING:-$HOME/.dsh/learning}"
 SCRIPTS="$(cd "$(dirname "$0")" && pwd)"   # 脚本永远在自身目录，隔离试跑时 BASE 只管产出
@@ -127,6 +128,10 @@ fi
 
 "$NODE" "$SCRIPTS/report.mjs"        || { echo "❌ 生成 MD 失败"; printf '生成 MD 失败，看日志：%s\n' "$LOG" >&3; exit 1; }
 "$NODE" "$SCRIPTS/report-html.mjs"   || { echo "❌ 生成 HTML 失败"; printf '生成 HTML 失败，看日志：%s\n' "$LOG" >&3; exit 1; }
+REDACT="${DSH_WEEKLY_REDACT:-1}"
+if [ "$REDACT" = "1" ] && [ -f "$SCRIPTS/redact-report.mjs" ]; then
+  "$NODE" "$SCRIPTS/redact-report.mjs" || echo "⚠️ 报告脱敏失败（原文件保留）"
+fi
 
 # 周号由 digest 的窗口终点算，不要用 ls -t：并发/时钟偏斜时会把别的周归档错位
 W="$("$NODE" -e 'const fs=require("fs");const d=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));const t=new Date(d.windowEnd||d.generatedAt);const u=new Date(Date.UTC(t.getFullYear(),t.getMonth(),t.getDate()));const day=u.getUTCDay()||7;u.setUTCDate(u.getUTCDate()+4-day);const ys=new Date(Date.UTC(u.getUTCFullYear(),0,1));process.stdout.write(u.getUTCFullYear()+"-W"+String(Math.ceil(((u-ys)/86400000+1)/7)).padStart(2,"0"))' "$BASE/weekly/digest.json" 2>/dev/null || true)"

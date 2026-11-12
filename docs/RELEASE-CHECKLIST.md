@@ -1,4 +1,4 @@
-# Release checklist · dsh-weekly-retro v0.4.0
+# Release checklist · dsh-weekly-retro v0.4.1
 
 发布前逐项打勾；未完成项不要 publish。
 
@@ -23,7 +23,9 @@
 - [ ] 全仓无作者用户名、无 `/Users/<name>`、无真实候选/会话标题
 - [ ] README 截图全部为合成演示数据（`DSH_LEARNING=/tmp/dsh-demo` 生成）
 - [ ] `docs/ui-wireframe.png` 已删除（含真实候选）
-- [ ] `~/.dsh/learning`、日志、临时截图、`.tgz` 不在 git 跟踪内
+- [x] `~/.dsh/learning`、日志、临时截图、`.tgz` 不在 git 跟踪内
+- [x] 报告/日志权限 `0600`、目录 `0700`；`*.redacted.*` 已生成并验证无标题/路径
+- [x] 中间产物清理命令 `pipeline/privacy-scrub.mjs --logs` 已文档化
 
 ## 2. 安全边界
 
@@ -50,12 +52,12 @@ DSH_NO_PATCH=1 DSH_VERIFY_PORT=62382 bash test/boot-verify.sh
 
 - [ ] `git init`，首次提交只包含项目文件（无 `node_modules`/截图源数据）
 - [ ] 推送 `<owner>/dsh-weekly-retro`，默认分支 `main`
-- [ ] tag `v0.4.0`；Release 附 tarball + 隐私说明链接
+- [ ] tag `v0.4.1`；Release 附 tarball + 隐私说明链接
 - [ ] 仓库开启 Security Advisories（SECURITY.md 指向）
 
 ## 5. Marketplace
 
-- [x] 名称：`dsh-weekly-retro`；版本 `0.4.0`；icon `assets/icon.png`
+- [x] 名称：`dsh-weekly-retro`；版本 `0.4.1`；icon `assets/icon.png`
 - [ ] 描述与 README 一致；标注前置依赖与“本机数据、无遥测”
 - [ ] **目录 PR**：`awesome-dsh-plugin` 要求仓库创建满 1 天；本仓库创建于 2026-11-12，最早 2026-11-13 提交 `data/plugins/Dreamaniax__dsh-weekly-retro.yml`（内容见 `docs/marketplace-entry.yml`）
 - [ ] 提交审核后，在干净 profile 安装验证：

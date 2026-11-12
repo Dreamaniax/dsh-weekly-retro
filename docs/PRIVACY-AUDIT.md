@@ -1,4 +1,4 @@
-# Privacy audit · dsh-weekly-retro v0.3.2
+# Privacy audit · dsh-weekly-retro v0.4.1
 
 > 审计目标：发布到 GitHub / DSH 插件市场前，确认 (A) 不会泄露作者信息；(B) 下载者不会意外暴露自己的数据。
 
@@ -32,6 +32,13 @@
 - 写路由：同源或 token；`report` week 参数白名单防路径穿越；`validate` 限制 `weekly/`。
 - `land-sync.sh` 只由用户显式“采纳并同步”触发，可能 git push 到用户自己的私有仓库；已明示。
 - 不自动运行采集：只有用户点击/调用工具才读会话。
+
+## 生成物落盘（本轮新增）
+
+- 全部周报/digest/packet/proposals/findings/history/decisions/logs 权限收紧为 `0600`，目录 `0700`；README/PRIVACY 列明路径。
+- 报告默认生成 `*.redacted.*` 分享副本（标题/路径/候选/技能名脱敏）；`/report` 默认返回该副本，完整版需本机 `?full=1` 或 `DSH_WEEKLY_REPORT_FULL=1`。
+- 现有历史周报已生成脱敏副本，并逐项验证 `private_hits=0`、`/Users/=0`、`~/=0`。
+- 中间产物 `digest.json`/`packet.md` 仍含消息片段（分析必需），权限 600；提供 `pipeline/privacy-scrub.mjs` 在分析后清理。
 
 ## 证据
 
