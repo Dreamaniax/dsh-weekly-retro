@@ -23,3 +23,28 @@
 - 截图：`docs/screenshots/{overview,overview-light,portrait,repeats,candidates,history}.png`。
 
 **评分**：按用户要求**不记录评分**。
+
+## 2026-11-12 · B2 可操作性
+
+**可见 PUA 输出**
+
+> 🟠 B2 的验收不是"按钮能点"，是开合、复制、排序、模态、Δ 五条路径都有真实输出。没跑出这些证据，只能算画了控件。
+>
+> `[PUA生效 🔥]` 主动修了两个隐蔽问题：profile 自动回装旧副本、重复证据渲染成 `[object Object]`；不修就是假交互。
+
+**交付内容**
+
+- 画像/重复：排序 + 行点击/Enter Drawer；重复 Drawer 可复制「固化指令」brief。
+- 候选：按评分/名称排序；行内「采纳」主操作；已落地/已跳过状态；复制 key toast。
+- 历史：周表 `Δ 会话` 环比，涨绿跌红。
+- 发布：npm `0.4.5` latest；GitHub release `v0.4.5`。
+
+**验证证据**
+
+- Drawer 开合/Esc、复制 toast「固化指令已复制」、候选确认弹窗、排序、历史 Δ 均通过。
+- 5 Tab `scrollWidth == clientWidth`；7 组测试通过。
+- 截图：`docs/screenshots/{portrait,repeats,candidates,history}.png`（B2 版本）。
+
+**边界**：重复「固化」当前是复制 brief，不直接写 proposals；真实写入放在 B3。
+
+**评分**：按用户要求**不记录评分**。
