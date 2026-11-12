@@ -309,7 +309,7 @@ DSH_HOME=<隔离目录> dsh --profile web --no-open --port 62332  → Playwright
 | SVG 图表可访问性 | 6 类图表全部 `role="img"` + 摘要 `aria-label`；Tab 具备 `tablist/tab/tabpanel` + `aria-selected` | 真实浏览器：`roleImgs=6`、`tabs` 语义正确、`pageErrors=[]` |
 | 文案 locale | 客户端 `inject=['slots','locale']`；优先宿主 `locale.t`，回退浏览器语言内置中/英 | `zh-CN` 显示「概览/画像/…」，`en-US` 显示「Overview/Portrait/…」 |
 | 双入口收敛 | 删除 `sidebar.right.pane.tab(.title)` 注册，只保留 `main` + `sidebar.panellist` | `client-runtime` slots=2；`preflight` 断言不得再出现右侧 pane tab |
-| README / P5 洞察页 | README v0.2.0 + 5 张真实截图；`MainPanel` 增加「本周洞察」hero（候选/重复/压缩/会话 chips + 打开报告） | `docs/screenshots/{overview,portrait,repeats,candidates,history}.png`；主面板渲染 hero |
+| README / P5 洞察页 | README v0.2.0 + 5 张真实截图；`MainPanel` 曾增加「本周洞察」hero（B1 已移除，合并到单层 header） | `docs/screenshots/{overview,portrait,repeats,candidates,history}.png`；主面板渲染 hero |
 
 版本：`package.json` → `0.2.0`。新增回归门：preflight 校验 `role="img"`、`tablist/aria-selected`、单一入口、`locale` 注入。
 

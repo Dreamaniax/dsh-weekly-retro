@@ -1,4 +1,4 @@
-# dsh-weekly-retro · DSH 周报复盘插件 v0.4.3
+# dsh-weekly-retro · DSH 周报复盘插件 v0.4.4
 
 ![plugin icon](./assets/icon.png)
 
@@ -64,7 +64,7 @@ pnpm install   # 也可用 DSH 运行时自带的 pnpm
 
 - **色板**：参考 `dsh-context` 的 8 色语义 token（主蓝 `#4D6BFE`、紫 `#A855F7`、青 `#00B4AB`、橙 `#F39A2B`、粉 `#C45FA0`、绿 `#41B883`、红 `#E5594F`、黄 `#F0D043`），按 60-30-10 分配：60% 中性层、30% 主蓝、10% 强调色。
 - **图表**：Donut / Bars / Histogram / Line / Heatmap / Funnel + 新增采纳率 Gauge、候选评分 Radar、工具用量 Treemap、周信号量 StackedArea；概览 `role=img` 图表 10 个。
-- **层次**：hero 蓝紫青渐变 + 语义 chips；卡片 hover 抬升（`prefers-reduced-motion` 关闭）；图表标题语义色点。
+- **层次**：单层 header（周次/新鲜度/运行/刷新）+ 6 列 KPI + 2 栏图表栅格；画像/重复/历史表格化；卡片 hover 抬升（`prefers-reduced-motion` 关闭）。
 - **可访问性**：全部图表 `role="img"` + 摘要 `aria-label`；Tab `tablist/tab/tabpanel`；提示气泡 hover/focus 可用；插件内文本浅色主题最低对比度 ≥6.44（无 <4.5）。
 
 ## 安全边界

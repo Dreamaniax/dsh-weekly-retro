@@ -142,3 +142,17 @@
 - 建议先做 B1，再根据你的偏好决定 B2 的下钻形态（Drawer vs 新页面）。
 
 > 截图索引：[概览](./screenshots/overview.png) · [画像](./screenshots/portrait.png) · [重复](./screenshots/repeats.png) · [候选](./screenshots/candidates.png) · [历史](./screenshots/history.png)
+
+
+## 9. B1 实施记录（v0.4.4）
+
+| 项 | 改前 | 改后 |
+|---|---|---|
+| 概览内容高度 | 2088px | **1158px**（-44%） |
+| 顶部 | hero + Panel 头两层 | 单层 header（周次/新鲜度/只重跑/全量/报告/刷新） |
+| 概览布局 | 7 张全宽图 | 2 栏栅格 + 6 列 KPI；堆叠/热力图并排 |
+| 画像/重复 | 条形图 + 大卡片 | 紧凑表格 |
+| 历史 | 折线裁切 + 周卡片 | 带坐标轴折线 + 周表 |
+| 候选筛选 | `all/skill/plugin` | 全部/技能/插件 + 计数；卡片 badge 同步中文化 |
+
+验证：1440×900 实测 `scrollHeight 1158`；5 Tab 无横向溢出；候选筛选 3→1/2；全量测试 7 组通过；截图已更新到 `docs/screenshots/`。B2（排序、下钻、CTA、空态）尚未实施。
