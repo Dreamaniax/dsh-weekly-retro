@@ -32,7 +32,7 @@ for (const p of findings.portrait || []) { if (p.mainline) pairs.push([String(p.
 for (const r of findings.repeats || []) if (r.pattern) pairs.push([String(r.pattern), '<重复动作>']);
 for (const d of decisions.decisions || []) if (d.candidate) pairs.push([String(d.candidate), '<候选>']);
 
-const targets = files.length ? files : ['latest.md', 'latest.html'];
+const targets = files.length ? files : fs.readdirSync(WEEKLY).filter((f) => /\.(md|html)$/.test(f) && !f.includes('.redacted.') && !f.startsWith('packet'));
 const out = [];
 for (const name of targets) {
   const src = path.isAbsolute(name) ? name : path.join(WEEKLY, name);
