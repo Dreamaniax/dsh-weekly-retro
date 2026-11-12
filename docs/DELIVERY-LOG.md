@@ -95,3 +95,20 @@
 - `desktop` 由 Electron 独占，CLI 直接 boot 被策略拒绝（不是数据失败）；应用重启后生效。
 
 **评分**：按用户要求**不记录评分**。
+
+## 2026-11-12 · profile 重建 + 0.4.7 隐私修复
+
+**可见 PUA 输出**
+
+> 🟠 profile 重建不是把目录换个名字。旧依赖被剪坏、CLI 与 Electron 解析不同、搜索词写进 URL——每一件都要拿重启后的运行数据验。
+>
+> `[PUA生效 🔥]` 主动做了旧 profile 整目录回滚点、配置备份、写路由跨源测试；发现 B3 搜索词进 URL 后，发布 0.4.7 把它从 URL 移除。
+
+**交付内容**
+
+- 用官方 `web` 模板重建 desktop profile，恢复 27 bundles / 18 deps / cordis.patch。
+- 安装 `dsh-weekly-retro@0.4.7`；旧 profile 保留 `desktop.broken-20261112-223938`。
+- 隐私修复：`weeklyCandidateQ` 不写 URL、不从 URL 恢复；Tab/筛选/排序仍持久化。
+- 发布：npm `0.4.7` latest；GitHub release `v0.4.7`。
+
+**评分**：按用户要求**不记录评分**。
