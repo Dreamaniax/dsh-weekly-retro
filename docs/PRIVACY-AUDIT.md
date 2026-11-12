@@ -1,4 +1,4 @@
-# Privacy audit · dsh-weekly-retro v0.4.7
+# Privacy audit · dsh-weekly-retro v0.4.8
 
 > 审计目标：发布到 GitHub / DSH 插件市场前，确认 (A) 不会泄露作者信息；(B) 下载者不会意外暴露自己的数据。
 
@@ -72,3 +72,11 @@ DSH_NO_PATCH=1 DSH_VERIFY_PORT=62381 bash test/boot-verify.sh
 - `test/boot-verify.sh` 会把本机 profile 的 `package.json`/`cordis*.yml` 复制到临时目录（退出删除），不会上传；共享机器上运行前请知悉。
 - `test/host.test.mjs`/`ui-contract` 会读取本机 learning 数据（只读、本地）；CI 建议用合成 `DSH_LEARNING`。
 - 不要把 `~/.dsh/learning`、截图、日志提交进仓库。
+
+
+## 0.4.8 密钥兜底
+
+- 发现 AnySearch Bearer token 被用户粘贴进会话，周报 digest 复制了它；profile `cordis.patch.yml` 也有明文。
+- 已移除 profile 明文（11 份配置/备份），token 仅保留在本机 `~/.dsh/secrets.env`（0600）；**该 token 必须轮换**。
+- `redact-report.mjs` / `privacy-scrub.mjs` 增加 Bearer / `as_sk_` / `sk-` / `ghp_` 等密钥兜底；`run-weekly.sh` 报告生成后执行 `--secrets-only`。
+- `test/privacy-secret.test.mjs` 验证 digest/report/log 中的假 token 都被替换为 `<secret>`。

@@ -7,6 +7,25 @@ import path from 'node:path';
 
 const LEARNING = process.env.DSH_LEARNING || path.join(process.env.HOME || '', '.dsh', 'learning');
 const WEEKLY = path.join(LEARNING, 'weekly');
+const SECRET_RE = /(Bearer\s+|as_sk_|sk-|ghp_|github_pat_|xox[baprs]-)[A-Za-z0-9._-]{16,}/gi;
+const scrubSecrets = (p) => {
+  try {
+    const t = fs.readFileSync(p, 'utf8');
+    const n = t.replace(SECRET_RE, '<secret>');
+    if (n !== t) { fs.writeFileSync(p, n, { mode: 0o600 }); try { fs.chmodSync(p, 0o600); } catch {} return 1; }
+  } catch {}
+  return 0;
+};
+const secretsOnly = process.argv.includes('--secrets-only');
+let scrubbed = 0;
+const scrubTree = (dir) => {
+  try {
+    for (const f of fs.readdirSync(dir)) {
+      const p = path.join(dir, f);
+      try { if (fs.statSync(p).isFile() && /\.(json|jsonl|md|html|log|txt)$/.test(f)) scrubbed += scrubSecrets(p); } catch {}
+    }
+  } catch {}
+};
 const scrubDigest = (p) => {
   let d; try { d = JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return 0; }
   let n = 0;
@@ -22,14 +41,21 @@ const scrubDigest = (p) => {
   return n;
 };
 let digests = 0, packets = 0;
-for (const f of fs.readdirSync(WEEKLY)) {
-  const p = path.join(WEEKLY, f);
-  if (/^digest.*\.json$/.test(f)) { try { scrubDigest(p); digests += 1; } catch {} }
-  if (/^packet.*\.md$/.test(f)) { fs.writeFileSync(p, '# packet 已脱敏\n\n正文已清除（privacy-scrub）。\n', { mode: 0o600 }); try { fs.chmodSync(p, 0o600); } catch {} packets += 1; }
+if (!secretsOnly) {
+  for (const f of fs.readdirSync(WEEKLY)) {
+    const p = path.join(WEEKLY, f);
+    if (/^digest.*\.json$/.test(f)) { try { scrubDigest(p); digests += 1; } catch {} }
+    if (/^packet.*\.md$/.test(f)) { fs.writeFileSync(p, '# packet 已脱敏\n\n正文已清除（privacy-scrub）。\n', { mode: 0o600 }); try { fs.chmodSync(p, 0o600); } catch {} packets += 1; }
+  }
 }
+// 无论哪种模式，都对周报目录做一次密钥兜底；--secrets-only 不清正文。
+scrubTree(WEEKLY);
 let logs = 0;
-if (process.argv.includes('--logs')) {
-  const dir = path.join(LEARNING, 'logs');
-  try { for (const f of fs.readdirSync(dir)) { try { fs.writeFileSync(path.join(dir, f), '', { mode: 0o600 }); logs += 1; } catch {} } } catch {}
+const logDir = path.join(LEARNING, 'logs');
+if (secretsOnly || process.argv.includes('--logs')) {
+  if (secretsOnly) scrubTree(logDir);
+  else {
+    try { for (const f of fs.readdirSync(logDir)) { try { fs.writeFileSync(path.join(logDir, f), '', { mode: 0o600 }); logs += 1; } catch {} } } catch {}
+  }
 }
-console.log(JSON.stringify({ ok: true, digests, packets, logs }));
+console.log(JSON.stringify({ ok: true, digests, packets, logs, secretsOnly, secretsScrubbed: scrubbed }));

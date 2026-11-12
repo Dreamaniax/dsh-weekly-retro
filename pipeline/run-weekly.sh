@@ -132,6 +132,10 @@ REDACT="${DSH_WEEKLY_REDACT:-1}"
 if [ "$REDACT" = "1" ] && [ -f "$SCRIPTS/redact-report.mjs" ]; then
   "$NODE" "$SCRIPTS/redact-report.mjs" || echo "⚠️ 报告脱敏失败（原文件保留）"
 fi
+# 密钥兜底：报告/日志里若出现用户粘贴的 token，不留在周报产物里
+if [ -f "$SCRIPTS/privacy-scrub.mjs" ]; then
+  "$NODE" "$SCRIPTS/privacy-scrub.mjs" --secrets-only || echo "⚠️ 密钥兜底脱敏失败"
+fi
 
 # 周号由 digest 的窗口终点算，不要用 ls -t：并发/时钟偏斜时会把别的周归档错位
 W="$("$NODE" -e 'const fs=require("fs");const d=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));const t=new Date(d.windowEnd||d.generatedAt);const u=new Date(Date.UTC(t.getFullYear(),t.getMonth(),t.getDate()));const day=u.getUTCDay()||7;u.setUTCDate(u.getUTCDate()+4-day);const ys=new Date(Date.UTC(u.getUTCFullYear(),0,1));process.stdout.write(u.getUTCFullYear()+"-W"+String(Math.ceil(((u-ys)/86400000+1)/7)).padStart(2,"0"))' "$BASE/weekly/digest.json" 2>/dev/null || true)"

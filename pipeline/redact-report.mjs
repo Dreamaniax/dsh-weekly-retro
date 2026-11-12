@@ -10,6 +10,9 @@ const WEEKLY = path.join(LEARNING, 'weekly');
 const args = process.argv.slice(2);
 const inPlace = args.includes('--in-place');
 const files = args.filter((a) => !a.startsWith('--'));
+// 兜底：会话/报告里可能出现被用户粘贴的密钥；分享副本绝不保留。
+const SECRET_RE = /(Bearer\s+|as_sk_|sk-|ghp_|github_pat_|xox[baprs]-)[A-Za-z0-9._-]{16,}/gi;
+const scrubSecret = (s) => s.replace(SECRET_RE, '<secret>');
 
 const read = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 const digest = read(path.join(WEEKLY, 'digest.json'), { sessions: [] });
@@ -45,6 +48,7 @@ for (const name of targets) {
   text = text.replace(/~\/[^\s<>"']+/g, '<path>')
     .replace(/\/Users\/[^\s<>"']+/g, '<path>')
     .replace(/[A-Za-z]:\\[^\s<>"']+/g, '<path>');
+  text = scrubSecret(text);
   const dst = inPlace ? src : src.replace(/\.(md|html)$/, '.redacted.$1');
   fs.writeFileSync(dst, text, { mode: 0o600 });
   out.push(dst);
