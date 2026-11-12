@@ -1,0 +1,4 @@
+# dsh-weekly-retro bundle patch：host 半加载 lib/index.js，client 半由 dsh.client 声明。
+- insert:
+    - id: dsh-weekly-retro
+      name: dsh-weekly-retro

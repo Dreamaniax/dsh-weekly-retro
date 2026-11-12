@@ -1,0 +1,47 @@
+{
+  "_怎么用": "复制成 ~/.dsh/learning/weekly/findings.json；把每个 <...> 换成真实值（会话 id 用 `node check-findings.mjs --list` 查，或直接从 packet.md 的「元信息」行复制）；改完跑 `node check-findings.mjs`，通过后再跑 report.mjs。留着占位符一定会被校验拦住——这是故意的。",
+  "_硬约束": "week 必须与 digest 同周；每个候选的 evidenceSessions 必须是本周真实会话 id；候选 ≤6 条；verdict=plugin 必须给 plugin_spec.trigger（bundle-patch/tool/client-ui/mcp）。",
+  "week": "<YYYY-Www，例如 2026-W46>",
+  "generatedAt": "<ISO 时间，例如 2026-11-15T22:10:00+08:00>",
+  "mode": "live",
+  "portrait": [
+    {
+      "mainline": "<这条主线在做什么，一句话>",
+      "goal": "<你要达成什么>",
+      "outputs": ["<主要产物，文件名即可>"],
+      "sessions": ["<session-id>"],
+      "note": "<可选：哪一步最费劲>"
+    }
+  ],
+  "repeats": [
+    {
+      "pattern": "<重复动作，写成流程：改完 → 跑一遍 → 比对>",
+      "count": 3,
+      "cost": "<每次成本，如 3-5 轮>",
+      "evidence": ["<session-id>"],
+      "status": "script | skill | rule | plugin"
+    }
+  ],
+  "candidates": [
+    {
+      "key": "<唯一短标识，用于去重，例如 plugin-week-packet>",
+      "title": "<一句话标题>",
+      "what": "<用大白话说这条流程从头到尾做什么>",
+      "evidence": "<本周依据：数字 + 目录/文件/会话>",
+      "steps": ["<落地第 1 步>", "<第 2 步>"],
+      "saving": "<预计收益>",
+      "effort": "<落地成本：极低/低/中/高>",
+      "shape": "skill | rule | plugin | schedule | watcher",
+      "verdict": "skill | skill-lite | rule | plugin | schedule | watcher | skip",
+      "scores": { "freq": 2, "trigger": 2, "capability": 2, "verifiable": 1 },
+      "why": "<可选：为什么是这个形态而不是别的>",
+      "evidenceSessions": ["<session-id>"],
+      "plugin_spec": {
+        "trigger": "bundle-patch | tool | client-ui | mcp",
+        "persist": false,
+        "reads": ["<读写哪些路径>"],
+        "minimal_scope": "<最小可行范围：注册什么、是否常驻>"
+      }
+    }
+  ]
+}

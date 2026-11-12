@@ -1,0 +1,70 @@
+{
+  "name": "dsh-weekly-retro",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "description": "DSH 周报复盘：/weekly 命令 + 4 工具 + 12 路由 + 五 Tab 可视化洞察页（8 色语义色板 / Gauge·Radar·Treemap·StackedArea / 可滚动 / 提示气泡 / 全文本对比度 ≥4.5 / i18n）",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "pipeline",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "PRIVACY.md",
+    "SECURITY.md",
+    "docs/screenshots",
+    "assets/icon.png",
+    "assets/icon-1024.png",
+    "assets/icon-tile.png",
+    "assets/sidebar-icon.svg"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*",
+    "@deepseek-ai/dsh-tools": "*"
+  },
+  "dsh": {
+    "engines": {
+      "dsh": ">=0.2.2-rc.1"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-slots"
+      ]
+    }
+  },
+  "icon": "./assets/icon.png",
+  "license": "MIT",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "plugin",
+    "weekly",
+    "retro",
+    "report",
+    "insights"
+  ],
+  "author": "Dreamaniax",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dreamaniax/dsh-weekly-retro.git"
+  },
+  "homepage": "https://github.com/Dreamaniax/dsh-weekly-retro#readme",
+  "bugs": {
+    "url": "https://github.com/Dreamaniax/dsh-weekly-retro/issues"
+  }
+}
