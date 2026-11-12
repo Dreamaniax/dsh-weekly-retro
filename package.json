@@ -1,6 +1,6 @@
 {
   "name": "dsh-weekly-retro",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "type": "module",
   "description": "DSH 周报复盘：/weekly 命令 + 4 工具 + 12 路由 + 五 Tab 可视化洞察页（8 色语义色板 / Gauge·Radar·Treemap·StackedArea / 可滚动 / 提示气泡 / 全文本对比度 ≥4.5 / i18n）",
   "main": "lib/index.js",

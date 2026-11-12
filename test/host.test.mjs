@@ -42,7 +42,7 @@ assert.deepEqual(routes.sort(), [
   '/dsh-weekly-retro/ui/candidates', '/dsh-weekly-retro/ui/findings',
   '/dsh-weekly-retro/ui/history', '/dsh-weekly-retro/ui/job',
   '/dsh-weekly-retro/ui/metrics', '/dsh-weekly-retro/ui/overview',
-  '/dsh-weekly-retro/ui/run',
+  '/dsh-weekly-retro/ui/repeat-candidate', '/dsh-weekly-retro/ui/run',
 ]);
 assert.deepEqual(commands, ['weekly']);
 console.log(JSON.stringify({ ok: true, week: s.week, sessions: s.sessions, candidates: s.candidates.length, routes: routes.length, commands: commands.length }));

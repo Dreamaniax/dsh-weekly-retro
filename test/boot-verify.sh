@@ -40,7 +40,7 @@ while [ "$i" -lt 50 ]; do
   { [ "$CODE" = "200" ] || [ "$CODE" = "401" ]; } && break
 done
 if [ "$CODE" != "200" ] && [ "$CODE" != "401" ]; then
-  echo "FAIL: web 未启动（最后 http=$CODE），日志尾部："; tail -15 "$V/web.log"; exit 1
+  echo "FAIL: web 未启动（最后 http=${CODE}），日志尾部："; tail -15 "$V/web.log"; exit 1
 fi
 
 DIAG=$(curl -s --max-time 8 "http://127.0.0.1:$PORT/dsh-weekly-retro/diagnostics")
@@ -69,7 +69,7 @@ if(!d.ok) bad.push("ok!=true");
 if(d.tools!==true) bad.push("tools 未注册："+(d.toolError||"?"));
 if(d.toolCount!==4) bad.push("toolCount="+d.toolCount+"（期望 4）");
 if(d.commands!==true) bad.push("commands 未注册");
-if(d.routes!==12) bad.push("routes="+d.routes+"（期望 12）");
+if(d.routes!==13) bad.push("routes="+d.routes+"（期望 13）");
 if(bad.length){console.error("FAIL: "+bad.join(" | "));process.exit(1)}
-console.log("PASS: tools=4 · commands=1 · routes=12");
+console.log("PASS: tools=4 · commands=1 · routes=13");
 ' "$DIAG"

@@ -287,7 +287,7 @@ DSH_HOME=<隔离目录> dsh --profile web --no-open --port 62332  → Playwright
 
 ## 15. 重启后自查（2026-11-12 11:2x）
 
-真实 App 重启后：最新 crash 日志停在 10:43（本次启动无新崩溃）、`weekly_status` 工具正常、12 条路由全部 200（1–2ms）、隔离真实启动 PASS、真实浏览器五 Tab/24 SVG/pageErrors=0。
+真实 App 重启后：最新 crash 日志停在 10:43（本次启动无新崩溃）、`weekly_status` 工具正常、13 条路由全部 200（1–2ms）、隔离真实启动 PASS、真实浏览器五 Tab/24 SVG/pageErrors=0。
 
 自查发现并修复的 4 个风险：
 

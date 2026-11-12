@@ -1,8 +1,8 @@
-# dsh-weekly-retro · DSH 周报复盘插件 v0.4.5
+# dsh-weekly-retro · DSH 周报复盘插件 v0.4.6
 
 ![plugin icon](./assets/icon.png)
 
-把 `~/.dsh/learning/scripts` 的确定性周报流水线包成 DSH 插件：**`/weekly` 命令 + 4 个工具 + 12 条路由 + 五 Tab 可视化洞察页**。
+把 `~/.dsh/learning/scripts` 的确定性周报流水线包成 DSH 插件：**`/weekly` 命令 + 4 个工具 + 13 条路由 + 五 Tab 可视化洞察页**。
 
 - 主机侧：采集 → 归纳 → 报告 → HTML 全链路，工具/命令/路由都可独立使用
 - 客户端侧：侧边栏「周报」入口 → 主洞察页（概览/画像/重复/候选/历史），原生 SVG/DOM 图表，零图表依赖
@@ -53,6 +53,7 @@ pnpm install   # 也可用 DSH 运行时自带的 pnpm
 | 路由 | `POST /dsh-weekly-retro/{run,land}` | 受保护写操作 |
 | 路由 | `GET /dsh-weekly-retro/ui/{overview,metrics,candidates,findings,history,job}` | 面板数据 |
 | 路由 | `POST /dsh-weekly-retro/ui/run` | 面板内启动任务 |
+| 路由 | `POST /dsh-weekly-retro/ui/repeat-candidate` | 重复动作生成候选（写 proposals.json） |
 
 自检端点：`GET /dsh-weekly-retro/diagnostics` → `{ok, tools, toolCount, toolError, commands, routes, mountedAt, remoteAccess}`。
 
@@ -65,12 +66,12 @@ pnpm install   # 也可用 DSH 运行时自带的 pnpm
 - **色板**：参考 `dsh-context` 的 8 色语义 token（主蓝 `#4D6BFE`、紫 `#A855F7`、青 `#00B4AB`、橙 `#F39A2B`、粉 `#C45FA0`、绿 `#41B883`、红 `#E5594F`、黄 `#F0D043`），按 60-30-10 分配：60% 中性层、30% 主蓝、10% 强调色。
 - **图表**：Donut / Bars / Histogram / Line / Heatmap / Funnel + 新增采纳率 Gauge、候选评分 Radar、工具用量 Treemap、周信号量 StackedArea；概览 `role=img` 图表 10 个。
 - **层次**：单层 header（周次/新鲜度/运行/刷新）+ 6 列 KPI + 2 栏图表栅格；画像/重复/历史表格化；卡片 hover 抬升（`prefers-reduced-motion` 关闭）。
-- **交互（B2）**：画像/重复行点击打开 Drawer；重复可复制固化指令；候选支持排序 + 行内采纳；历史表带 Δ 环比。
+- **交互（B2/B3）**：画像/重复行点击打开 Drawer；重复可生成候选（写 proposals.json，仍需采纳）；候选支持排序 + 行内采纳；历史表带 Δ 环比；Tab/筛选/搜索/排序写入 URL；骨架/空态与 Drawer 焦点收口。
 - **可访问性**：全部图表 `role="img"` + 摘要 `aria-label`；Tab `tablist/tab/tabpanel`；提示气泡 hover/focus 可用；插件内文本浅色主题最低对比度 ≥6.44（无 <4.5）。
 
 ## 安全边界
 
-- 写路由（`run`/`land`/`ui/run`）只允许 **同源** 或携带 `X-Weekly-Token`（`DSH_WEEKLY_TOKEN` 可选配置）
+- 写路由（`run`/`land`/`ui/run`/`ui/repeat-candidate`）只允许 **同源** 或携带 `X-Weekly-Token`（`DSH_WEEKLY_TOKEN` 可选配置）
 - `week` 参数白名单 `^\d{4}-W\d{2}$`，堵住 `/report?week=../../...` 路径穿越
 - JSON 响应 `Cache-Control: no-store` + `nosniff` + `no-referrer`；报告页同样不缓存
 - HTML 生成器对所有注入字段做 `esc()`；报告无外部资源
@@ -81,7 +82,7 @@ pnpm install   # 也可用 DSH 运行时自带的 pnpm
 ```bash
 node test/client-runtime.test.mjs   # factory 真执行：导出 apply/inject、2 个 slot、inject=['slots','locale']
 node test/preflight.test.mjs        # manifest/inject 白名单、入口唯一、a11y 语义、ModuleLoader 包装、语法
-node test/host.test.mjs             # 12 路由 + 1 命令 + W46 数据
+node test/host.test.mjs             # 13 路由 + 1 命令 + W46 数据
 node test/ui-contract.test.mjs      # /ui/* 契约 + 指标字节
 node test/robustness.test.mjs       # 17 项：坏 JSON、异步 spawn、CSRF、状态码、token 模式
 node test/land-concurrency.test.mjs # 10 进程并发 land，0 丢失
@@ -100,7 +101,7 @@ DSH_NO_PATCH=1 DSH_VERIFY_PORT=62341 bash test/boot-verify.sh   # 隔离真实�
 ## 结构
 
 ```
-lib/index.js      host 半：工具/命令/12 路由/写门禁/任务注册表
+lib/index.js      host 半：工具/命令/13 路由/写门禁/任务注册表
 lib/data.js       数据与流水线：summary/reportHtml/runPipeline/land/validate
 lib/ui-data.js    只读聚合：overview/metrics/candidates/findings/history
 lib/client.js     client 半：ModuleLoader 工厂、五 Tab、6 类图表、i18n、a11y

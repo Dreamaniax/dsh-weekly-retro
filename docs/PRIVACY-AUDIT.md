@@ -1,4 +1,4 @@
-# Privacy audit · dsh-weekly-retro v0.4.5
+# Privacy audit · dsh-weekly-retro v0.4.6
 
 > 审计目标：发布到 GitHub / DSH 插件市场前，确认 (A) 不会泄露作者信息；(B) 下载者不会意外暴露自己的数据。
 

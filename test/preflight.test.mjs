@@ -72,6 +72,6 @@ const ctx = {
   logger: { warn: () => {} },
 };
 assert.doesNotThrow(() => mod.apply(ctx));
-assert.equal(calls.length, 12);
+assert.equal(calls.length, 13);
 
 console.log(JSON.stringify({ ok: true, inject: mod.inject, routes: calls.length, client: 'declared' }));
