@@ -24,7 +24,9 @@
 
 ## 安装
 
-DSH 插件市场安装（推荐）：搜索 `dsh-weekly-retro`。
+````text
+安装方式（当前）：npm / GitHub release。DSH 官方市场目录条目待提交——仓库满 1 天后按 `docs/marketplace-entry.yml` 提 PR；合并前不要在应用内搜索。
+````
 
 GitHub / 本地开发：
 ```bash
