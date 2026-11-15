@@ -15,6 +15,7 @@
   },
   "files": [
     "lib",
+    "skills",
     "pipeline",
     "cordis.patch.yml",
     "README.md",
