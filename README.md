@@ -1,4 +1,6 @@
-# dsh-weekly-retro · DSH 周报复盘插件 v0.4.9
+# dsh-weekly-retro · DSH 周报复盘插件 v0.5.0-rc.1
+
+> 本地迁移预演版，尚未发布；稳定版见 npm `0.4.9`。
 
 ![plugin icon](./assets/icon.png)
 
