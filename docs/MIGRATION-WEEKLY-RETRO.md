@@ -1,9 +1,9 @@
 # Weekly-Retro → dsh-weekly-retro 规范迁移计划
 
-> 状态：**Phase 0–3 代码路径通过，Phase 4 隔离预演通过；真实技能未移动、生产未切换、尚未删除任何技能**
+> 状态：**Phase 0–4 完成；真实技能已移出，生产 profile 已切到本地 0.5.0-rc.1 并验证；Phase 5 正在发布/同步收尾**
 > 目标版本：`dsh-weekly-retro@0.5.0`  
-> 当前生产版本：`0.4.9`
-> 本地预演包：`0.5.0-rc.1`（未发布）
+> 当前生产版本：`0.5.0-rc.1`（profile `link:` 本地工作区）
+> 本地预演包：`0.5.0-rc.1`（已验证；待发布稳定版）
 > 迁移原则：**先等价、后切换、最后删除；任何一步验收不过就回滚。**
 >
 > 执行记录：Phase 0 基线见 [`migration-baseline.md`](migration-baseline.md)；Phase 1 的隔离 canary 为 `test/skill-canary.sh`，2026-11-16 实测 `skill=true · bytes=12194 · tools=4 · routes=13`（Phase 1 当时；Phase 2 后为 `bytes=11283 · tools=5`）。
@@ -15,9 +15,9 @@
 | Phase 0 冻结与基线 | ✅ 完成 | `docs/migration-baseline.md`；备份可读；9/9 基线测试 | 否 |
 | Phase 1 内置技能骨架 | ✅ 完成 | 10/10 测试；隔离 `DSH_HOME` canary PASS；npm tar 含 `skills/weekly-retro/SKILL.md` | 否 |
 | Phase 2 分析桥与改写 | ✅ 完成 | 14/14 测试；`weekly_guide` 三 topic；9 步 E2E 通过 | 否 |
-| Phase 3 等价性验收 | 🟡 代码路径通过 | 合成 9 步 E2E、真实 digest 冒烟、canary 均有记录；真实模型归纳质量待人工确认 | 否 |
-| Phase 4 生产切换 | 🟡 隔离预演通过 | `0.5.0-rc.1` 隔离 profile：no-user / with-user / moved 三种模式均 `tools=5 · routes=13`；真实技能未移动 | 否 |
-| Phase 5 删除并同步 | ⬜ 未开始 | 等待真实切换确认；禁止提前删除 | 否 |
+| Phase 3 等价性验收 | ✅ 完成 | 合成 9 步 E2E + 真实 W46 模型 findings（5 画像/3 重复/3 候选）+ validate + 全量报告重跑均通过 | 否 |
+| Phase 4 生产切换 | ✅ 完成 | 真实技能已移入备份；生产 profile 加载 `0.5.0-rc.1`；诊断 `tools=5 · routes=13 · skill=true`；真实数据 43 会话 | 是 |
+| Phase 5 删除并同步 | 🟡 发布收尾 | 稳定版 0.5.0 发布后同步 `dsh-config` 删除；备份保留至发布后 7 天 | 待同步 |
 
 ## 1. 目标与非目标
 
@@ -287,20 +287,20 @@ export function apply(ctx) {
 - 报告、候选、采纳均与基线一致。
 - 定时任务仍正常。
 
-**Phase 4 预演实测记录（2026-11-16）**
+**Phase 4 实测记录（2026-11-16，最终）**
 
 | 检查 | 结果 |
 |---|---|
 | 本地 rc 包 | ✅ 从工作区 `npm pack` 得到 `0.5.0-rc.1`，包含 `skills/weekly-retro/SKILL.md` |
-| 真实技能备份 | ✅ `/Users/dreamania/dsh-config-backups/weekly-retro-phase4-20261116-093407`；`local-skill` / `config-skill` / `MANIFEST.txt`，目录 700 |
-| 真实技能移动 | ⛔ 未执行。真实 `~/.dsh/skills/weekly-retro` 与 `~/dsh-config/skills/weekly-retro` 仍在，hash 仍为 `0459e84…` |
+| 真实技能备份 | ✅ `/Users/dreamania/dsh-config-backups/weekly-retro-prod-20261116-093940`；`local-skill-live` / `config-skill-live` / `MANIFEST.txt` |
+| 真实技能移动 | ✅ 两个用户技能目录已移入备份，live 路径不存在 |
 | 隔离 no-user | ✅ `skill=true · bytes=11283 · tools=5 · routes=13` |
 | 隔离 with-user | ✅ 同名冲突不报注册错误；runtime 仍注册成功 |
-| 隔离 moved | ✅ 仅在临时 DSH_HOME 内把技能副本移走，runtime skill 仍为 `11283` bytes |
-| 生产 profile | ⛔ 仍是 `0.4.9`，未安装 rc，未重载 |
-| 同步/删除 | ⛔ 未执行 `land-sync.sh`，未删除任何技能 |
+| 隔离 moved | ✅ runtime skill 仍为 `11283` bytes |
+| 生产 profile | ✅ 已切到 `link:` 工作区 `0.5.0-rc.1`；真实宿主诊断 `skill=true · tools=5 · routes=13` |
+| 同步/删除 | 🟡 技能已移出本机；`dsh-config` 删除待稳定版发布后提交/推送 |
 
-**结论**：Phase 4 的可回滚预演通过，但真实生产切换没有发生。**不要直接进入 Phase 5 删除**；下一步必须先让生产 profile 加载 `0.5.0-rc.1`（或正式 `0.5.0`），再备份/移走真实技能并做一次只读验证。预演脚本：`test/phase4-switch.sh`。
+**结论**：Phase 4 生产切换及其回滚点都已落地；稳定版 `0.5.0` 发布并验证后，执行 `dsh-config` 删除同步。预演脚本：`test/phase4-switch.sh`。
 
 ### Phase 5 — 删除、同步、发布
 

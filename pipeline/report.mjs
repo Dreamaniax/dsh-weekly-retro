@@ -347,7 +347,7 @@ lines.push('2. 有没有本周费力但我没识别出来的活？');
 lines.push('3. 纠偏信号里哪几条该变成长期规则？');
 lines.push('');
 lines.push('---');
-lines.push(`_生成 ${fmtTime(now.getTime())} · 脚本 ~/.dsh/learning/scripts/ · 可视化版见同名 .html_`);
+lines.push(`_生成 ${fmtTime(now.getTime())} · 流水线 dsh-weekly-retro/pipeline/ · 可视化版见同名 .html_`);
 
 const md = lines.join('\n');
 writeFileAtomic(path.join(WEEKLY, `${week}.md`), md);

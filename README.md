@@ -1,10 +1,10 @@
-# dsh-weekly-retro · DSH 周报复盘插件 v0.5.0-rc.1
+# dsh-weekly-retro · DSH 周报复盘插件 v0.5.0
 
-> 本地迁移预演版，尚未发布；稳定版见 npm `0.4.9`。
+> 稳定版已发布到 npm 与 DSH 插件市场；插件内置确定性流水线与 `weekly-retro` 分析技能。
 
 ![plugin icon](./assets/icon.png)
 
-把 `~/.dsh/learning/scripts` 的确定性周报流水线包成 DSH 插件：**`/weekly` 命令 + 4 个工具 + 13 条路由 + 五 Tab 可视化洞察页**。
+把周报复盘从本机脚本迁成可安装的 DSH 插件：**`/weekly` 命令 + 5 个工具 + 13 条路由 + 五 Tab 可视化洞察页 + 运行时技能**。
 
 - 主机侧：采集 → 归纳 → 报告 → HTML 全链路，工具/命令/路由都可独立使用
 - 客户端侧：侧边栏「周报」入口 → 主洞察页（概览/画像/重复/候选/历史），原生 SVG/DOM 图表，零图表依赖
@@ -27,15 +27,15 @@
 ## 安装
 
 ````text
-安装方式（当前）：npm / GitHub release。DSH 官方市场目录条目待提交——仓库满 1 天后按 `docs/marketplace-entry.yml` 提 PR；合并前不要在应用内搜索。
+安装方式：DSH 插件市场搜索 dsh-weekly-retro；或从 npm / GitHub Release 安装。
+官方市场目录条目已合并（索引刷新后可见）。
 ````
 
-GitHub / 本地开发：
+本地开发（维护者）：
 ```bash
 git clone https://github.com/Dreamaniax/dsh-weekly-retro.git
 cd dsh-weekly-retro
-```
-# 本机开发：在插件目录执行；profile 里 link 本目录（不要复制，改完要能热更新）
+# profile 里 link 本目录（不要复制，改完要能热更新）
 PLUGIN_DIR="$(pwd)"; export PLUGIN_DIR
 cd ~/.dsh/profiles/desktop
 node -e 'const fs=require("fs"),f="package.json",p=require("./"+f),d=process.env.PLUGIN_DIR;p.dsh.profile.bundles=[...new Set([...p.dsh.profile.bundles,"dsh-weekly-retro"])];p.dependencies["dsh-weekly-retro"]="link:"+d;fs.writeFileSync(f,JSON.stringify(p,null,2)+"\n")'
@@ -64,7 +64,7 @@ pnpm install   # 也可用 DSH 运行时自带的 pnpm
 
 > 隐私：所有数据路由**默认只允许本机回环访问**；远程访问需显式 `DSH_WEEKLY_ALLOW_REMOTE=1`（并自行加认证）或携带 `X-Weekly-Token`。报告默认存 `~/.dsh/learning/weekly/`，完整版 `0600`，`/report` 默认返回 `*.redacted.html`；详见 [PRIVACY.md](./PRIVACY.md)。
 
-> 数据目录：默认 `~/.dsh/learning`（`DSH_LEARNING` 可覆盖）。确定性流水线已随包内置（`pipeline/`）；本机若已有 `~/.dsh/learning/scripts` 则优先用本机版本。落地同步由本机同步器负责（用于把技能/profile 同步到你自己的私有配置仓库）；没有同步器时“采纳”仍会写入 `decisions.json`，只是不同步。
+> 数据目录：默认 `~/.dsh/learning`（`DSH_LEARNING` 可覆盖）。确定性流水线以包内 `pipeline/` 为准，`DSH_WEEKLY_SCRIPTS` 仅用于测试/显式覆盖；旧 `~/.dsh/learning/scripts` 只在包内文件缺失时兜底。落地同步由本机同步器负责（用于把技能/profile 同步到你自己的私有配置仓库）；没有同步器时“采纳”仍会写入 `decisions.json`，只是不同步。
 
 ## 设计
 

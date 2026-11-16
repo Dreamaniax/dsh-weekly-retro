@@ -1,8 +1,8 @@
 {
   "name": "dsh-weekly-retro",
-  "version": "0.5.0-rc.1",
+  "version": "0.5.0",
   "type": "module",
-  "description": "DSH 周报复盘：/weekly 命令 + 4 工具 + 12 路由 + 五 Tab 可视化洞察页（8 色语义色板 / Gauge·Radar·Treemap·StackedArea / 可滚动 / 提示气泡 / 全文本对比度 ≥4.5 / i18n）",
+  "description": "DSH 周报复盘：/weekly 命令 + 5 工具 + 13 路由 + 五 Tab 可视化洞察页；内置确定性流水线与分析技能（8 色语义色板 / Gauge·Radar·Treemap·StackedArea / 可滚动 / 提示气泡 / 全文本对比度 ≥4.5 / i18n）",
   "main": "lib/index.js",
   "exports": {
     ".": {

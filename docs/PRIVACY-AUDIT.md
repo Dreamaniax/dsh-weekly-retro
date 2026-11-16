@@ -1,4 +1,4 @@
-# Privacy audit · dsh-weekly-retro v0.4.9
+# Privacy audit · dsh-weekly-retro v0.5.0
 
 > 审计目标：发布到 GitHub / DSH 插件市场前，确认 (A) 不会泄露作者信息；(B) 下载者不会意外暴露自己的数据。
 
@@ -19,9 +19,9 @@
 
 ## A. 作者信息暴露面
 
-- 包内 `package.json`：无 `author`/邮箱/手机号；`license: MIT`（版权人为 contributors）。
-- 全仓扫描：无作者用户名、无绝对 home 路径、无 token/私钥模式；PNG 无文本元数据。
-- npm tarball 扫描：仅 21 个运行时/文档文件，PII 命中 0。
+- 包内 `package.json`：公开 GitHub handle `Dreamaniax`；无邮箱/手机号；`license: MIT`。
+- 全仓扫描：无绝对 home 路径、无 token/私钥模式；PNG 无文本元数据。
+- npm tarball 扫描：36 个运行时/技能/文档文件，PII 命中 0；技能内容不含本机路径。
 - 截图：全部由 `DSH_LEARNING=/tmp/dsh-demo` 的合成数据生成，无真实会话/候选/路径。
 
 ## B. 下载者数据暴露面

@@ -2,7 +2,7 @@
 # 每周复盘：采集会话 → 生成周报（MD + 可勾选 HTML）。
 #
 # 调度：macOS 用 launchd、Windows 用任务计划程序 —— 都由 scripts/schedule.sh 安装
-# 手动：bash ~/.dsh/learning/scripts/run-weekly.sh
+# 手动：由 DSH 插件 weekly_run(mode=full) 调用；也可直接执行本文件
 # 隔离测试：DSH_LEARNING=/tmp/xx bash run-weekly.sh（不碰真实周报）
 #
 # 依赖：node（自动找：DSH_NODE → PATH → DSH runtime → Windows 常见安装位置）
