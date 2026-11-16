@@ -67,9 +67,9 @@ const d=JSON.parse(process.argv[1]||"{}");
 const bad=[];
 if(!d.ok) bad.push("ok!=true");
 if(d.tools!==true) bad.push("tools 未注册："+(d.toolError||"?"));
-if(d.toolCount!==4) bad.push("toolCount="+d.toolCount+"（期望 4）");
+if(d.toolCount!==5) bad.push("toolCount="+d.toolCount+"（期望 5）");
 if(d.commands!==true) bad.push("commands 未注册");
 if(d.routes!==13) bad.push("routes="+d.routes+"（期望 13）");
 if(bad.length){console.error("FAIL: "+bad.join(" | "));process.exit(1)}
-console.log("PASS: tools=4 · commands=1 · routes=13");
+console.log("PASS: tools=5 · commands=1 · routes=13");
 ' "$DIAG"

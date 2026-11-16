@@ -66,7 +66,7 @@ if(d.ok!==true) bad.push("ok!=true");
 if(d.skill!==true) bad.push("skill 未注册："+(d.skillError||"?"));
 if(d.skillName!=="weekly-retro") bad.push("skillName="+d.skillName);
 if(!(d.skillBytes>1000)) bad.push("skillBytes="+d.skillBytes);
-if(d.toolCount!==4) bad.push("toolCount="+d.toolCount);
+if(d.toolCount!==5) bad.push("toolCount="+d.toolCount);
 if(d.routes!==13) bad.push("routes="+d.routes);
 if(bad.length){console.error("FAIL: "+bad.join(" | "));process.exit(1)}
 console.log("PASS: skill="+d.skillName+" · bytes="+d.skillBytes+" · tools="+d.toolCount+" · routes="+d.routes);

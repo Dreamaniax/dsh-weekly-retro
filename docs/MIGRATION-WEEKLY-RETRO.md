@@ -52,7 +52,7 @@
 ### 关键事实
 
 - 插件 README 已明确：**“周报归纳依赖模型分析环节；插件只跑确定性流水线，不做模型判断。”**
-- 插件当前工具：`weekly_status`、`weekly_run`、`weekly_land`、`weekly_validate`。
+- Phase 2 插件工具：`weekly_guide`、`weekly_status`、`weekly_run`、`weekly_land`、`weekly_validate`。
 - 当前插件没有注册任何技能，也没有 `skills` 注入；`package.json.files` 不含技能内容。
 - DSH 的 `@deepseek-ai/dsh-skill` 提供运行时技能注册：
   - `ctx.skills.register(skill: SkillRegistration): () => void`
@@ -177,19 +177,19 @@ export function apply(ctx) {
 
 **验收**
 
-- 测试通过；tar 包有技能文件；插件 boot 仍为 `tools=4 routes=13`。
+- 测试通过；tar 包有技能文件；插件 boot 仍为 `tools=5 routes=13`。
 - 隔离 `DSH_HOME`（不含用户技能）里，`skill` 目录出现 `weekly-retro`，source 为 `runtime`。
 - 生产环境同名冲突行为被记录，不假设谁覆盖谁。
 
 **Phase 1 实测记录（2026-11-16）**
 
 - `node --test test/*.test.mjs`：**10/10 pass**。
-- `bash test/skill-canary.sh`（无用户技能）：`skill=true · skillName=weekly-retro · bytes=12194 · tools=4 · routes=13`，无注册错误。
+- `bash test/skill-canary.sh`（无用户技能）：`skill=true · skillName=weekly-retro · tools=5 · routes=13`，无注册错误。
 - `WITH_USER_SKILL=1 bash test/skill-canary.sh`（同名冲突）：runtime 注册仍成功、无报错；**解析优先级未观测到**，所以不假设 runtime 覆盖用户技能，留 Phase 3 用模型行为探针验证。
 - `npm pack --dry-run --json`：35 files，含 `skills/weekly-retro/SKILL.md`；包体 833508 bytes。
 - 生产 profile 未加载本阶段包；用户技能、定时任务均未动。
 
-### Phase 2 — 分析桥与规范改写
+### Phase 2 — 分析桥与规范改写 🟡（实现完成，9 步 E2E 留 Phase 3）
 
 **做什么**
 
@@ -211,6 +211,23 @@ export function apply(ctx) {
 - 9 步逐步能在隔离数据上走通。
 - `weekly_guide` 不返回原文正文、token、绝对路径（路径字段除外且可脱敏）。
 - 所有旧脚本路径在 SKILL.md 中为 0 处（除迁移说明）。
+
+**Phase 2 实测记录（2026-11-16）**
+
+| 检查 | 结果 |
+|---|---|
+| `weekly_guide` 三个 topic | ✅ packet / findings-template / plugin-criteria |
+| packet 上限与脱敏 | ✅ 20k 字符上限；隔离用例把 `/Users/...` 与 Bearer 都替换为 `<path>` / `<secret>` |
+| 包内判据 | ✅ `pipeline/PLUGIN-CRITERIA.md`，随 npm tar 打包 |
+| SKILL.md 旧脚本路径 | ✅ 0 处（`learning/scripts`、`run-weekly.sh`、`land-sync.sh`、`check-findings.mjs`、`report*.mjs`、`selftest.sh`、`history-merge.mjs` 全部清零） |
+| SKILL.md 绝对路径 | ✅ 0 处 `/Users/` `/home/` |
+| 约束保留 | ✅ 0 会话 fail-closed、单实例锁、回填、≤6、评分、15 行、四件事、未同步口径、隐私 |
+| 测试 | ✅ 13/13 pass |
+| 隔离 canary | ✅ `tools=5 · routes=13 · skillBytes=11283` |
+| npm tar | ✅ 36 files / 835553 bytes，含技能与判据 |
+| 9 步全流程隔离 E2E | ⬜ 未完成，Phase 3 执行；当前不宣布 Phase 2 门禁全过 |
+
+**结论**：Phase 2 的“工具桥 + 规范改写 + 静态隐私门禁”已完成；**不把 9 步 E2E 的欠账包装成已完成**。Phase 3 才做等价性验收和生产切换前检查。
 
 ### Phase 3 — 等价性验收（隔离环境）
 

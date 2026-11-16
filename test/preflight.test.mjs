@@ -49,7 +49,7 @@ assert.ok(pkg.dsh.engines.dsh, '必须声明 dsh 兼容区间');
 
 // 4) 工具定义完整，且踩过的两个坑必须回归拦截
 const defs = buildToolDefs();
-assert.deepEqual(defs.map((d) => d.name), ['weekly_status', 'weekly_run', 'weekly_land', 'weekly_validate']);
+assert.deepEqual(defs.map((d) => d.name), ['weekly_guide', 'weekly_status', 'weekly_run', 'weekly_land', 'weekly_validate']);
 for (const d of defs) {
   assert.equal(typeof d.output?.render, 'function', `${d.name} 缺 output.render（defineTool 会崩）`);
   assert.ok(d.output?.schema, `${d.name} 缺 output.schema`);

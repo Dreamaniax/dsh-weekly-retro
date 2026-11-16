@@ -6,7 +6,7 @@
 
 - 主机侧：采集 → 归纳 → 报告 → HTML 全链路，工具/命令/路由都可独立使用
 - 客户端侧：侧边栏「周报」入口 → 主洞察页（概览/画像/重复/候选/历史），原生 SVG/DOM 图表，零图表依赖
-- 交互：只重跑报告 / 全量重跑（带进度轮询）/ 采纳并同步（写前备份 + 二次确认；会执行本机 `land-sync.sh`，可能 git push 到你的私有配置仓库）
+- 交互：只重跑报告 / 全量重跑（带进度轮询）/ 采纳并同步（写前备份 + 二次确认；会调用本机同步器，可能 git push 到你的私有配置仓库）
 - 文案：接宿主 `locale` 服务，内置中英双语（浏览器语言回退）
 - 可访问性：图表 `role="img"` + `aria-label`，Tab 具备 `tablist/tab/tabpanel` 语义
 
@@ -47,6 +47,7 @@ pnpm install   # 也可用 DSH 运行时自带的 pnpm
 | 形态 | 名称 | 作用 |
 |---|---|---|
 | 命令 | `/weekly` | 打印本周概要；`/weekly run` 重新生成 |
+| 工具 | `weekly_guide` | 只读分析桥：packet / findings 模板 / 形态判据（packet ≤20k） |
 | 工具 | `weekly_status` | 读概要（只读） |
 | 工具 | `weekly_run` | 跑 collect→condense→report→html（2–5s，不含模型分析） |
 | 工具 | `weekly_land` | 把候选写入 `decisions.json`（写前备份） |
@@ -61,7 +62,7 @@ pnpm install   # 也可用 DSH 运行时自带的 pnpm
 
 > 隐私：所有数据路由**默认只允许本机回环访问**；远程访问需显式 `DSH_WEEKLY_ALLOW_REMOTE=1`（并自行加认证）或携带 `X-Weekly-Token`。报告默认存 `~/.dsh/learning/weekly/`，完整版 `0600`，`/report` 默认返回 `*.redacted.html`；详见 [PRIVACY.md](./PRIVACY.md)。
 
-> 数据目录：默认 `~/.dsh/learning`（`DSH_LEARNING` 可覆盖）。确定性流水线已随包内置（`pipeline/`）；本机若已有 `~/.dsh/learning/scripts` 则优先用本机版本。`land-sync.sh` 仍由用户本机提供（用于把技能/profile 同步到你自己的私有配置仓库），没有它时“采纳”仍会写入 `decisions.json`，只是不同步。
+> 数据目录：默认 `~/.dsh/learning`（`DSH_LEARNING` 可覆盖）。确定性流水线已随包内置（`pipeline/`）；本机若已有 `~/.dsh/learning/scripts` 则优先用本机版本。落地同步由本机同步器负责（用于把技能/profile 同步到你自己的私有配置仓库）；没有同步器时“采纳”仍会写入 `decisions.json`，只是不同步。
 
 ## 设计
 
@@ -119,7 +120,7 @@ assets/           图标（256/1024/tile + 侧栏 weekly-loop SVG）
 - 周报归纳依赖模型分析环节；插件只跑确定性流水线，不做模型判断
 - 报告页为静态 HTML，交互仅有 Tab 切换
 - 仅 web 端 client；桌面端以外未验证
-- `land-sync.sh` 需用户本机提供；没有它时采纳只写 `decisions.json`，不执行同步
+- 本机同步器需由用户环境提供；没有它时采纳只写 `decisions.json`，不执行同步
 - 远程访问默认关闭；经反向代理时插件只能看到直连地址，需自行在代理层加认证
 
 ## 事故复盘

@@ -9,11 +9,12 @@ assert.ok(Array.isArray(s.candidates), 'candidates 应为数组');
 assert.ok(s.sessions >= 0 && s.turns >= 0);
 
 const defs = buildToolDefs();
-assert.deepEqual(defs.map((d) => d.name), ['weekly_status', 'weekly_run', 'weekly_land', 'weekly_validate']);
-assert.deepEqual(Object.keys(defs[2].parameters), ['key', 'note', 'sync']);
-assert.equal(defs[2].parameters.key.required, true);
+assert.deepEqual(defs.map((d) => d.name), ['weekly_guide', 'weekly_status', 'weekly_run', 'weekly_land', 'weekly_validate']);
+const byName = Object.fromEntries(defs.map((d) => [d.name, d]));
+assert.deepEqual(Object.keys(byName.weekly_land.parameters), ['key', 'note', 'sync']);
+assert.equal(byName.weekly_land.parameters.key.required, true);
 
-const status = await defs[0].execute();
+const status = await byName.weekly_status.execute();
 assert.equal(typeof status, 'object');
 assert.ok(typeof status.summary === 'string' && status.summary.includes('会话'));
 
