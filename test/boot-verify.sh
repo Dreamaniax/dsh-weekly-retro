@@ -14,9 +14,20 @@ trap cleanup EXIT
 [ -x "$CLI" ] || { echo "FAIL: 找不到 dsh CLI：$CLI"; exit 1; }
 [ -d "$SRC" ] || { echo "FAIL: 找不到源 profile：$SRC"; exit 1; }
 
-mkdir -p "$V/profiles/web"
+mkdir -p "$V/profiles/web/node_modules"
 cp "$SRC/package.json" "$SRC/cordis.yml" "$SRC/cordis.patch.yml" "$V/profiles/web/" 2>/dev/null || true
-ln -s "$SRC/node_modules" "$V/profiles/web/node_modules"
+# 只把宿主依赖链过去，插件本体必须用当前工作区，否则 boot 验的是 profile 里的旧版本。
+for p in "$SRC"/node_modules/* "$SRC"/node_modules/.[!.]*; do
+  [ -e "$p" ] || continue
+  b="$(basename "$p")"
+  [ "$b" = "dsh-weekly-retro" ] && continue
+  ln -s "$p" "$V/profiles/web/node_modules/$b"
+done
+mkdir -p "$V/profiles/web/node_modules/dsh-weekly-retro"
+rsync -a --exclude .git --exclude test --exclude docs --exclude '.DS_Store' \
+  "$HERE/" "$V/profiles/web/node_modules/dsh-weekly-retro/" 2>/dev/null \
+  || cp -R "$HERE/lib" "$HERE/skills" "$HERE/pipeline" "$HERE/package.json" "$HERE/cordis.patch.yml" \
+       "$V/profiles/web/node_modules/dsh-weekly-retro/"
 # 默认用 --patch 覆盖层试挂；DSH_NO_PATCH=1 时直接验证 profile 自身的 bundles（用于装回后复验）
 if [ "${DSH_NO_PATCH:-0}" = "1" ]; then
   echo "（DSH_NO_PATCH=1：直接验证 profile bundles，不用覆盖层）"

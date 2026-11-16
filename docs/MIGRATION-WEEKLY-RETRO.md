@@ -1,11 +1,11 @@
 # Weekly-Retro → dsh-weekly-retro 规范迁移计划
 
-> 状态：**Phase 0–1 已完成，Phase 2 待开始；尚未删除任何技能**  
+> 状态：**Phase 0–2 已完成，Phase 3 代码路径通过；尚未切换生产、尚未删除任何技能**
 > 目标版本：`dsh-weekly-retro@0.5.0`  
 > 当前版本：`0.4.9`  
 > 迁移原则：**先等价、后切换、最后删除；任何一步验收不过就回滚。**
 >
-> 执行记录：Phase 0 基线见 [`migration-baseline.md`](migration-baseline.md)；Phase 1 的隔离 canary 为 `test/skill-canary.sh`，2026-11-16 实测 `skill=true · bytes=12194 · tools=4 · routes=13`。
+> 执行记录：Phase 0 基线见 [`migration-baseline.md`](migration-baseline.md)；Phase 1 的隔离 canary 为 `test/skill-canary.sh`，2026-11-16 实测 `skill=true · bytes=12194 · tools=4 · routes=13`（Phase 1 当时；Phase 2 后为 `bytes=11283 · tools=5`）。
 
 ### 执行状态
 
@@ -13,9 +13,9 @@
 |---|---|---|---|
 | Phase 0 冻结与基线 | ✅ 完成 | `docs/migration-baseline.md`；备份可读；9/9 基线测试 | 否 |
 | Phase 1 内置技能骨架 | ✅ 完成 | 10/10 测试；隔离 `DSH_HOME` canary PASS；npm tar 含 `skills/weekly-retro/SKILL.md` | 否 |
-| Phase 2 分析桥与改写 | ⏳ 下一步 | — | 否 |
-| Phase 3 等价性验收 | ⬜ 未开始 | — | 否 |
-| Phase 4 生产切换 | ⬜ 未开始 | 未满足 Phase 3 门禁，禁止开始 | 否 |
+| Phase 2 分析桥与改写 | ✅ 完成 | 14/14 测试；`weekly_guide` 三 topic；9 步 E2E 通过 | 否 |
+| Phase 3 等价性验收 | 🟡 代码路径通过 | 合成 9 步 E2E、真实 digest 冒烟、canary 均有记录；真实模型归纳质量待人工确认 | 否 |
+| Phase 4 生产切换 | ⬜ 未开始 | Phase 3 仍有模型质量门禁，禁止开始 | 否 |
 | Phase 5 删除并同步 | ⬜ 未开始 | 未满足 Phase 4 门禁，禁止删除 | 否 |
 
 ## 1. 目标与非目标
@@ -185,11 +185,11 @@ export function apply(ctx) {
 
 - `node --test test/*.test.mjs`：**10/10 pass**。
 - `bash test/skill-canary.sh`（无用户技能）：`skill=true · skillName=weekly-retro · tools=5 · routes=13`，无注册错误。
-- `WITH_USER_SKILL=1 bash test/skill-canary.sh`（同名冲突）：runtime 注册仍成功、无报错；**解析优先级未观测到**，所以不假设 runtime 覆盖用户技能，留 Phase 3 用模型行为探针验证。
+- `WITH_USER_SKILL=1 bash test/skill-canary.sh`（同名冲突）：runtime 注册仍成功、无报错。后续读 `@deepseek-ai/dsh-skill@0.0.1-rc.1` 源码确认：同一层 **runtime > user**；同名 runtime 先到先得；更近的 scoped 层优先。当前用户技能是全局 filesystem 提供者，理论上被 runtime 覆盖；preset-scoped 用户技能仍是 Phase 4 风险。
 - `npm pack --dry-run --json`：35 files，含 `skills/weekly-retro/SKILL.md`；包体 833508 bytes。
 - 生产 profile 未加载本阶段包；用户技能、定时任务均未动。
 
-### Phase 2 — 分析桥与规范改写 🟡（实现完成，9 步 E2E 留 Phase 3）
+### Phase 2 — 分析桥与规范改写 ✅
 
 **做什么**
 
@@ -222,12 +222,12 @@ export function apply(ctx) {
 | SKILL.md 旧脚本路径 | ✅ 0 处（`learning/scripts`、`run-weekly.sh`、`land-sync.sh`、`check-findings.mjs`、`report*.mjs`、`selftest.sh`、`history-merge.mjs` 全部清零） |
 | SKILL.md 绝对路径 | ✅ 0 处 `/Users/` `/home/` |
 | 约束保留 | ✅ 0 会话 fail-closed、单实例锁、回填、≤6、评分、15 行、四件事、未同步口径、隐私 |
-| 测试 | ✅ 13/13 pass |
+| 测试 | ✅ 14/14 pass（Phase 3 E2E 加入后） |
 | 隔离 canary | ✅ `tools=5 · routes=13 · skillBytes=11283` |
 | npm tar | ✅ 36 files / 835553 bytes，含技能与判据 |
-| 9 步全流程隔离 E2E | ⬜ 未完成，Phase 3 执行；当前不宣布 Phase 2 门禁全过 |
+| 9 步全流程隔离 E2E | ✅ 合成 digest 9 步通过；见 Phase 3 实测记录 |
 
-**结论**：Phase 2 的“工具桥 + 规范改写 + 静态隐私门禁”已完成；**不把 9 步 E2E 的欠账包装成已完成**。Phase 3 才做等价性验收和生产切换前检查。
+**结论**：Phase 2 的“工具桥 + 规范改写 + 静态隐私门禁”已完成，9 步代码路径已在 Phase 3 跑通；模型归纳质量不等同于代码路径通过，继续在 Phase 3 单独记录。
 
 ### Phase 3 — 等价性验收（隔离环境）
 
@@ -250,6 +250,24 @@ export function apply(ctx) {
 - 没有发现“插件技能能加载但 9 步走不通”的半成品状态。
 
 **回滚点**：删除隔离环境；生产未动。
+
+**Phase 3 实测记录（2026-11-16）**
+
+| 检查 | 结果 |
+|---|---|
+| 合成 9 步 E2E | ✅ `test/phase3-e2e.test.mjs`；`status → guide(packet/template) → validate → run(report) → land(sync=false) → decisions` |
+| E2E 计数 | ✅ `sessions=3 · portrait=3 · repeats=2 · candidates=2 · steps=9` |
+| 坏 findings | ✅ 未知 session 被拒；校验不覆盖旧报告；`weekly_run(report)` 回退非空壳并标记 `findingsRejected` |
+| `sync=false` 语义 | ✅ `synced:false`，`where=已落地但未同步（sync=false）`，decisions 同口径 |
+| 真实 digest 冒烟 | ✅ 当前 W46 的 `digest.json`/`packet.md` 复制到隔离目录；3 个真实 session id、2 重复、2 候选；报告与 `weekly_land(sync=false)` 均通过 |
+| 入口 no-user canary | ✅ `skill=weekly-retro · bytes=11283 · tools=5 · routes=13` |
+| 入口 with-user canary | ✅ 同名冲突不报注册错误；源代码规则为同层 runtime > user，preset-scoped 层仍可能更近 |
+| 边界 | ✅ 现有 `test/robustness.test.mjs`（17 项）、`test/land-concurrency.test.mjs`（10/10）、`test/guide-isolation.test.mjs`、packet 截断、空数据、并发、缺脚本、远程 403 均通过 |
+| 全量测试 | ✅ 14/14 pass |
+| boot 验收 | ✅ `bash test/boot-verify.sh` → `tools=5 · commands=1 · routes=13`，且改为挂载当前工作区插件，不再误验 profile 内旧包 |
+| 未完成 | ⬜ 真实模型对真实 packet 的归纳质量、生产入口实际调用、Phase 4 切换 |
+
+**结论（保守）**：Phase 3 的确定性代码路径与真实数据 schema 已通过；**不把固定 findings fixture 当成模型分析验收**。Phase 4 仍需人工确认“真实模型产出质量”后才能开始；不删技能、不切生产。
 
 ### Phase 4 — 切换入口（可回滚）
 
