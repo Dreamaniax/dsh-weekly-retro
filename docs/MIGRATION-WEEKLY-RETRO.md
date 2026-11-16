@@ -1,9 +1,9 @@
 # Weekly-Retro → dsh-weekly-retro 规范迁移计划
 
-> 状态：**Phase 0–4 完成；真实技能已移出，生产 profile 已切到本地 0.5.0-rc.1 并验证；Phase 5 正在发布/同步收尾**
+> 状态：**Phase 0–5 代码/发布/同步完成；稳定版 0.5.0 已发布，生产 profile 已装 0.5.0，旧技能已移出并推送；运行中的 Electron GUI 待重启加载稳定包**
 > 目标版本：`dsh-weekly-retro@0.5.0`  
-> 当前生产版本：`0.5.0-rc.1`（profile `link:` 本地工作区）
-> 本地预演包：`0.5.0-rc.1`（已验证；待发布稳定版）
+> 当前生产版本：`0.5.0`（npm exact dependency）
+> 本地预演包：`0.5.0`（稳定版，已发布）
 > 迁移原则：**先等价、后切换、最后删除；任何一步验收不过就回滚。**
 >
 > 执行记录：Phase 0 基线见 [`migration-baseline.md`](migration-baseline.md)；Phase 1 的隔离 canary 为 `test/skill-canary.sh`，2026-11-16 实测 `skill=true · bytes=12194 · tools=4 · routes=13`（Phase 1 当时；Phase 2 后为 `bytes=11283 · tools=5`）。
@@ -16,8 +16,8 @@
 | Phase 1 内置技能骨架 | ✅ 完成 | 10/10 测试；隔离 `DSH_HOME` canary PASS；npm tar 含 `skills/weekly-retro/SKILL.md` | 否 |
 | Phase 2 分析桥与改写 | ✅ 完成 | 14/14 测试；`weekly_guide` 三 topic；9 步 E2E 通过 | 否 |
 | Phase 3 等价性验收 | ✅ 完成 | 合成 9 步 E2E + 真实 W46 模型 findings（5 画像/3 重复/3 候选）+ validate + 全量报告重跑均通过 | 否 |
-| Phase 4 生产切换 | ✅ 完成 | 真实技能已移入备份；生产 profile 加载 `0.5.0-rc.1`；诊断 `tools=5 · routes=13 · skill=true`；真实数据 43 会话 | 是 |
-| Phase 5 删除并同步 | 🟡 发布收尾 | 稳定版 0.5.0 发布后同步 `dsh-config` 删除；备份保留至发布后 7 天 | 待同步 |
+| Phase 4 生产切换 | ✅ 完成 | 真实技能已移入备份；生产 profile 先加载 `0.5.0-rc.1`，后切到 `0.5.0`；诊断 `tools=5 · routes=13 · skill=true`；真实数据 43 会话 | 是 |
+| Phase 5 删除并同步 | ✅ 完成 | 稳定版 0.5.0 已发布；`dsh-config` 删除提交 `5c54b71`、合并 `8c4f5f0` 已推送；旧技能目录不存在；实际 GUI 待重启 | 是 |
 
 ## 1. 目标与非目标
 
@@ -297,10 +297,10 @@ export function apply(ctx) {
 | 隔离 no-user | ✅ `skill=true · bytes=11283 · tools=5 · routes=13` |
 | 隔离 with-user | ✅ 同名冲突不报注册错误；runtime 仍注册成功 |
 | 隔离 moved | ✅ runtime skill 仍为 `11283` bytes |
-| 生产 profile | ✅ 已切到 `link:` 工作区 `0.5.0-rc.1`；真实宿主诊断 `skill=true · tools=5 · routes=13` |
-| 同步/删除 | 🟡 技能已移出本机；`dsh-config` 删除待稳定版发布后提交/推送 |
+| 生产 profile | ✅ rc 阶段使用 `link:` 工作区 `0.5.0-rc.1`；发布后已切到 exact `0.5.0`；隔离稳定宿主诊断 `skill=true · tools=5 · routes=13` |
+| 同步/删除 | ✅ 技能已移出本机；`dsh-config` 删除提交 `5c54b71`、合并 `8c4f5f0` 已推送；旧目录不存在 |
 
-**结论**：Phase 4 生产切换及其回滚点都已落地；稳定版 `0.5.0` 发布并验证后，执行 `dsh-config` 删除同步。预演脚本：`test/phase4-switch.sh`。
+**结论**：Phase 4 生产切换及其回滚点都已落地；稳定版 `0.5.0` 已发布并安装到 profile。预演脚本：`test/phase4-switch.sh`。
 
 ### Phase 5 — 删除、同步、发布
 
@@ -324,6 +324,21 @@ export function apply(ctx) {
 - 插件包内 `skills/weekly-retro/SKILL.md` 存在。
 - 新会话触发「跑周报」仍加载插件技能。
 - 发布产物无 PII / 无 token / 无本机路径。
+
+**Phase 5 实测记录（2026-11-16，最终）**
+
+| 检查 | 结果 |
+|---|---|
+| npm 稳定版 | ✅ `dsh-weekly-retro@0.5.0`；36 files / 835.9KB；dist shasum `c9374fea…` |
+| GitHub Release | ✅ `v0.5.0` 已发布并附 tarball |
+| 生产 profile | ✅ exact `"dsh-weekly-retro": "0.5.0"`；`pnpm install` 安装真实包；lock 已更新 |
+| 隔离稳定宿主 | ✅ `tools=5 · routes=13 · skill=true · skillBytes=11283`；真实 W46 数据 43 会话 / 5 画像 / 3 重复 / 3 候选 |
+| dsh-config 删除 | ✅ `5c54b71` + merge `8c4f5f0` 已推送；`skills/weekly-retro` 不存在 |
+| 本机旧技能 | ✅ `~/.dsh/skills/weekly-retro` 与 `~/dsh-config/skills/weekly-retro` 均不存在；备份保留 |
+| 实际 GUI 重启 | ⬜ 待完成；当前运行进程仍加载 rc 包，需重启后确认稳定包 |
+| 发布产物 PII | ✅ 0 真实路径/邮箱命中；正则源码命中为预期，不是数据泄露 |
+
+**结论**：代码、发布、profile 依赖和配置仓库同步已完成；唯一剩余动作是重启 Electron GUI，让运行中的宿主加载稳定包并做一次实际界面确认。
 
 ### Phase 6 — 观察与收尾
 
